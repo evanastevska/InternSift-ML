@@ -1,7 +1,9 @@
-const MODEL_NAME = "gemini-1.5-flash";
+const MODEL_NAME = "gemini-3-flash-preview";
 const API_KEY = PropertiesService.getScriptProperties().getProperty("GEMINI_API_KEY");
 
 function onGmailMessageOpen(e) {
+  GmailApp.setCurrentMessageAccessToken(e.messageMetadata.accessToken);
+
   var messageId = e.messageMetadata.messageId;
   var message = GmailApp.getMessageById(messageId);
   var subject = message.getSubject();
@@ -56,11 +58,17 @@ CRITICAL: You must ignore polite fluff. Focus on the sender's intent.
 
   try {
     var response = UrlFetchApp.fetch(url, options);
+
+    if (response.getResponseCode() !== 200) {
+      return "HTTP_ERROR: " + response.getContentText();
+    }
+
     var json = JSON.parse(response.getContentText());
     var verdictStr = json.candidates[0].content.parts[0].text;
     return JSON.parse(verdictStr).verdict;
+
   } catch (error) {
-    return "ERROR";
+    return "CODE_ERROR: " + error.toString();
   }
 }
 
@@ -79,8 +87,8 @@ function buildSidebarCard(verdict, subject) {
     section.addWidget(CardService.newTextParagraph().setText("<b>Analysis:</b> This appears to be marketing or automated spam."));
     card.setHeader(header);
   } else {
-    var header = CardService.newCardHeader().setTitle("Analysis Failed").setSubtitle("API Error");
-    section.addWidget(CardService.newTextParagraph().setText("Could not analyze this email."));
+    var header = CardService.newCardHeader().setTitle("Analysis Failed").setSubtitle("Debug Info");
+    section.addWidget(CardService.newTextParagraph().setText(verdict));
     card.setHeader(header);
   }
 
@@ -89,6 +97,8 @@ function buildSidebarCard(verdict, subject) {
 }
 
 function createDraftReply(e) {
+  GmailApp.setCurrentMessageAccessToken(e.messageMetadata.accessToken);
+
   var messageId = e.messageMetadata.messageId;
   var message = GmailApp.getMessageById(messageId);
   var thread = message.getThread();
