@@ -77,17 +77,39 @@ function buildSidebarCard(verdict, subject) {
   var section = CardService.newCardSection();
 
   if (verdict === "LEGIT") {
-    var header = CardService.newCardHeader().setTitle("Legitimate Inquiry").setSubtitle("Ready to reply.");
-    section.addWidget(CardService.newTextParagraph().setText("<b>Action:</b> This looks like a real student/human."));
+    var header = CardService.newCardHeader()
+      .setTitle("Legitimate Inquiry")
+      .setSubtitle("Ready to reply.")
+      .setImageUrl("https://www.gstatic.com/images/icons/material/system/2x/check_circle_black_24dp.png")
+      .setImageStyle(CardService.ImageStyle.CIRCLE);
+
+    section.addWidget(CardService.newTextParagraph().setText("<b>Status:</b> This looks like a real student/human."));
+
     var action = CardService.newAction().setFunctionName("createDraftReply");
-    section.addWidget(CardService.newTextButton().setText("Draft Internship Reply").setOnClickAction(action).setTextButtonStyle(CardService.TextButtonStyle.FILLED));
+    section.addWidget(CardService.newTextButton()
+      .setText("Draft Internship Reply")
+      .setOnClickAction(action)
+      .setTextButtonStyle(CardService.TextButtonStyle.FILLED)
+      .setBackgroundColor("#673AB7"));
+
     card.setHeader(header);
+
   } else if (verdict === "SPAM") {
-    var header = CardService.newCardHeader().setTitle("Potential Spam").setSubtitle("No action needed.");
-    section.addWidget(CardService.newTextParagraph().setText("<b>Analysis:</b> This appears to be marketing or automated spam."));
+    var header = CardService.newCardHeader()
+      .setTitle("Potential Spam")
+      .setSubtitle("No action needed.")
+      .setImageUrl("https://www.gstatic.com/images/icons/material/system/2x/cancel_black_24dp.png")
+      .setImageStyle(CardService.ImageStyle.CIRCLE);
+
+    section.addWidget(CardService.newTextParagraph().setText("<b>Status:</b> This appears to be marketing or automated spam."));
+
     card.setHeader(header);
+
   } else {
-    var header = CardService.newCardHeader().setTitle("Analysis Failed").setSubtitle("Debug Info");
+    var header = CardService.newCardHeader()
+      .setTitle("Analysis Failed")
+      .setSubtitle("Debug Info");
+
     section.addWidget(CardService.newTextParagraph().setText(verdict));
     card.setHeader(header);
   }
