@@ -1,4 +1,4 @@
-# InternSift — AI Email Classifier for Cinema Verde
+# InternSift — AI Email Classifier for Cinema Verde 
 
 A Gmail Add-on that automatically classifies incoming emails as legitimate 
 internship inquiries or B2B spam, built during an internship at Cinema Verde, 
